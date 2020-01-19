@@ -1,4 +1,6 @@
 # app-notes
+Note taking app
+Written on the Vuetify and firebase
 
 ## Project setup
 ```
