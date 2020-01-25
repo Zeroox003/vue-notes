@@ -8,7 +8,8 @@
 
         <NoteForm :note-for-edit="noteForEdit" @cancel-update="cancelUpdate" />
 
-        ПОИСК
+        <Search @onSearchInput="onSearchInput" />
+
         <masonry :cols="{ default: 3, 800: 2, 500: 1 }" :gutter="20">
           <Note
             class="mb-5"
@@ -27,29 +28,39 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 import Note from "../components/Note";
 import NoteForm from "../components/NoteForm";
+import Search from "../components/Search";
 
 export default {
   name: "notes",
   components: {
     Note,
-    NoteForm
+    NoteForm,
+    Search
   },
   data: () => ({
     noteForEdit: null,
+    searchTerm: "",
     notes: []
   }),
   computed: {
-    ...mapGetters(["getAllNotes"])
+    getAllNotes() {
+      const toLower = value => value.toLocaleLowerCase();
+      const searchTerm = toLower(this.searchTerm);
+      return this.$store.getters.getAllNotes.filter(
+        n =>
+          (n.body && toLower(n.body).includes(searchTerm)) ||
+          (n.tody && toLower(n.title).includes(searchTerm))
+      );
+    }
   },
   async mounted() {
     await this.$store.dispatch("fetchNotes");
   },
   methods: {
-    async updateNote(id) {
-      this.noteForEdit = await this.$store.dispatch("fetchNoteById", id);
+    updateNote(id) {
+      this.noteForEdit = this.getAllNotes.find(n => n.id === id);
     },
     cancelUpdate() {
       this.noteForEdit = null;
@@ -57,6 +68,9 @@ export default {
     async logout() {
       await this.$store.dispatch("logout");
       this.$router.push("/login");
+    },
+    onSearchInput(searchTerm) {
+      this.searchTerm = searchTerm;
     }
   }
 };
