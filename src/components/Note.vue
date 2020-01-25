@@ -11,25 +11,36 @@
 
     <hr />
     <v-card-actions>
-      <v-btn
-        icon
-        text
-        class="mx-2"
-        color="orange accent-2"
-        @click.prevent="updateNote"
-      >
-        <v-icon>edit</v-icon>
-      </v-btn>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            v-on="on"
+            icon
+            text
+            color="orange accent-2"
+            @click.prevent="updateNote"
+          >
+            <v-icon>edit</v-icon>
+          </v-btn>
+        </template>
+        <span>Edit</span>
+      </v-tooltip>
+
       <v-spacer />
-      <v-btn
-        icon
-        text
-        class="mx-2"
-        color="red accent-2"
-        @click.prevent="deleteNote(id)"
-      >
-        <v-icon>delete</v-icon>
-      </v-btn>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            v-on="on"
+            icon
+            text
+            color="red accent-2"
+            @click.prevent="deleteNote(id)"
+          >
+            <v-icon>delete</v-icon>
+          </v-btn>
+        </template>
+        <span>Delete</span>
+      </v-tooltip>
     </v-card-actions>
   </v-card>
 </template>
