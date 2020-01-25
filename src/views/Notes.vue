@@ -1,46 +1,48 @@
 <template>
   <div>
-    <v-content>
-      <v-container fluid>
-        <v-btn @click.prevent="logout">
-          Logout
-        </v-btn>
+    <v-btn @click.prevent="logout">
+      Logout
+    </v-btn>
 
-        <NoteForm :note-for-edit="noteForEdit" @cancel-update="cancelUpdate" />
+    <Search @onSearchInput="onSearchInput" />
 
-        <Search @onSearchInput="onSearchInput" />
+    <masonry :cols="{ default: 3, 800: 2, 500: 1 }" :gutter="20">
+      <Note
+        class="mb-5"
+        v-for="note in getAllNotes"
+        :key="note.id"
+        :id="note.id"
+        :title="note.title"
+        :body="note.body"
+        :date="note.date"
+        @updateNote="updateNote"
+      />
+    </masonry>
 
-        <masonry :cols="{ default: 3, 800: 2, 500: 1 }" :gutter="20">
-          <Note
-            class="mb-5"
-            v-for="note in getAllNotes"
-            :key="note.id"
-            :id="note.id"
-            :title="note.title"
-            :body="note.body"
-            :date="note.date"
-            @updateNote="updateNote"
-          />
-        </masonry>
-      </v-container>
-    </v-content>
+    <NoteModal
+      :show-modal="showModal"
+      :note-for-edit="noteForEdit"
+      @cancel-update="cancelUpdate"
+    />
   </div>
 </template>
 
 <script>
 import Note from "../components/Note";
-import NoteForm from "../components/NoteForm";
 import Search from "../components/Search";
+import NoteModal from "../components/NoteModal";
 
 export default {
   name: "notes",
   components: {
     Note,
-    NoteForm,
-    Search
+    Search,
+    NoteModal
   },
   data: () => ({
     noteForEdit: null,
+    showModal: false,
+
     searchTerm: "",
     notes: []
   }),
@@ -51,7 +53,7 @@ export default {
       return this.$store.getters.getAllNotes.filter(
         n =>
           (n.body && toLower(n.body).includes(searchTerm)) ||
-          (n.tody && toLower(n.title).includes(searchTerm))
+          (n.title && toLower(n.title).includes(searchTerm))
       );
     }
   },
@@ -61,9 +63,11 @@ export default {
   methods: {
     updateNote(id) {
       this.noteForEdit = this.getAllNotes.find(n => n.id === id);
+      this.showModal = true;
     },
     cancelUpdate() {
       this.noteForEdit = null;
+      this.showModal = false;
     },
     async logout() {
       await this.$store.dispatch("logout");

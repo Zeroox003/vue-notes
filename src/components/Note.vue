@@ -25,14 +25,13 @@
         </template>
         <span>Edit</span>
       </v-tooltip>
-
-      <v-spacer />
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
             v-on="on"
             icon
             text
+            class="ml-3"
             color="red accent-2"
             @click.prevent="deleteNote(id)"
           >

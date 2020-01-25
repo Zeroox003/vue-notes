@@ -1,3 +1,4 @@
+import Vue from "vue";
 import firebase from "firebase/app";
 
 export default {
@@ -91,8 +92,8 @@ export default {
       state.notes.unshift(note);
     },
     updateNote(state, note) {
-      const idx = state.notes.findIndex(n => n.id === note.id);
-      state.notes[idx] = { ...state.notes[idx], ...note };
+      const id = state.notes.findIndex(n => n.id === note.id);
+      Vue.set(state.notes, id, { ...state.notes[id], ...note });
     },
     deleteNote(state, id) {
       state.notes = state.notes.filter(n => n.id !== id);
