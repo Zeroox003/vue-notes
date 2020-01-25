@@ -30,18 +30,17 @@
       </v-form>
     </v-card-text>
     <v-card-actions>
-      <v-spacer />
-      <template v-if="noteForEdit">
-        <v-btn @click.prevent="resetForm">
-          Cancel update
-        </v-btn>
-        <v-btn @click.prevent="update">
-          Apply changes
-        </v-btn>
-      </template>
-      <v-btn v-else @click.prevent="create">
+      <v-btn v-if="!noteForEdit" text color="blue" @click.prevent="create">
         Create
       </v-btn>
+      <template v-else>
+        <v-btn text color="red" @click.prevent="resetForm">
+          Cancel
+        </v-btn>
+        <v-btn text color="green" @click.prevent="update">
+          Apply
+        </v-btn>
+      </template>
     </v-card-actions>
   </v-card>
 </template>

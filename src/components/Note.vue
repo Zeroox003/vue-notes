@@ -1,5 +1,5 @@
 <template>
-  <v-card color="grey darken-2">
+  <v-card>
     <v-card-title class="headline">{{ title }}</v-card-title>
     <v-card-subtitle>
       <strong>Created date:</strong> {{ date | date }}
@@ -9,12 +9,26 @@
       <pre class="text-body">{{ body }}</pre>
     </v-card-text>
 
+    <hr />
     <v-card-actions>
-      <v-btn class="mx-2" text @click.prevent="updateNote">
-        Edit
+      <v-btn
+        icon
+        text
+        class="mx-2"
+        color="orange accent-2"
+        @click.prevent="updateNote"
+      >
+        <v-icon>edit</v-icon>
       </v-btn>
-      <v-btn class="mx-2" text color="red" @click.prevent="deleteNote(id)">
-        Delete
+      <v-spacer />
+      <v-btn
+        icon
+        text
+        class="mx-2"
+        color="red accent-2"
+        @click.prevent="deleteNote(id)"
+      >
+        <v-icon>delete</v-icon>
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -41,6 +55,10 @@ export default {
 </script>
 
 <style>
+.v-card hr {
+  border: 0.5px solid #ddd;
+}
+
 .text-body {
   white-space: pre-wrap;
 }
