@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app :style="{ background: $vuetify.theme.themes[theme].background }">
     <component :is="layout">
       <router-view />
     </component>
@@ -19,6 +19,9 @@ export default {
   computed: {
     layout() {
       return this.$route.meta.layout || "default-layout";
+    },
+    theme() {
+      return this.$vuetify.theme.dark ? "dark" : "light";
     }
   },
   created() {
