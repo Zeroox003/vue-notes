@@ -1,6 +1,6 @@
 <template>
   <v-content>
-    <Drawer :drawer="drawer" />
+    <Drawer :drawer.sync="drawer" />
 
     <v-app-bar app color="primary" dark>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />

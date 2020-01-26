@@ -1,14 +1,14 @@
 <template>
-  <v-navigation-drawer v-model="drawer" app>
+  <v-navigation-drawer v-model="localDrawer" app>
     <template v-slot:prepend>
       <v-list-item two-line>
         <v-list-item-avatar>
           <v-icon>person</v-icon>
         </v-list-item-avatar>
-
         <v-list-item-content>
-          <v-list-item-title>User Email</v-list-item-title>
-          <v-list-item-subtitle>Logged In</v-list-item-subtitle>
+          <v-list-item-title>
+            {{ user.email }}
+          </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
     </template>
@@ -28,12 +28,40 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
   name: "Drawer",
   props: {
     drawer: {
       type: Boolean,
       default: false
+    }
+  },
+  data() {
+    return {
+      localDrawer: this.drawer
+    };
+  },
+  watch: {
+    drawer() {
+      this.localDrawer = this.drawer;
+    },
+    localDrawer() {
+      this.$emit("update:drawer", this.localDrawer);
+    }
+  },
+  computed: {
+    ...mapGetters(["user"])
+  },
+  created() {
+    if (!this.user) {
+      try {
+        this.$store.dispatch("setUser");
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.log(e);
+      }
     }
   }
 };

@@ -3,29 +3,31 @@ import router from "../router/index";
 
 export default {
   actions: {
-    async login(_, { email, password }) {
+    async login({ dispatch }, { email, password }) {
       try {
         await firebase.auth().signInWithEmailAndPassword(email, password);
+
+        dispatch("setUser");
         router.push("/");
       } catch (e) {
         throw e;
       }
     },
-    async register(_, { email, password }) {
+    async register({ dispatch }, { email, password }) {
       try {
         await firebase.auth().createUserWithEmailAndPassword(email, password);
+
+        dispatch("setUser");
         router.push("/");
       } catch (e) {
         throw e;
       }
     },
-    async logout() {
+    async logout({ commit }) {
       await firebase.auth().signOut();
+
+      commit("clearUser");
       router.push("/login");
-    },
-    getUid() {
-      const user = firebase.auth().currentUser;
-      return user ? user.uid : null;
     }
   }
 };
