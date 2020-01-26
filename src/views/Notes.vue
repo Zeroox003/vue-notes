@@ -1,9 +1,5 @@
 <template>
   <div>
-    <v-btn @click.prevent="logout">
-      Logout
-    </v-btn>
-
     <Search @onSearchInput="onSearchInput" />
 
     <masonry :cols="{ default: 3, 800: 2, 500: 1 }" :gutter="20">
@@ -68,10 +64,6 @@ export default {
     cancelUpdate() {
       this.noteForEdit = null;
       this.showModal = false;
-    },
-    async logout() {
-      await this.$store.dispatch("logout");
-      this.$router.push("/login");
     },
     onSearchInput(searchTerm) {
       this.searchTerm = searchTerm;

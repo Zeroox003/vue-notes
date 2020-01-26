@@ -4,7 +4,7 @@
     v-model="dialog"
     fullscreen
     hide-overlay
-    transition="dialog-bottom-transition"
+    transition="scale-transition"
   >
     <template v-slot:activator="{ on: { click } }">
       <v-tooltip top>
@@ -30,16 +30,16 @@
       </v-tooltip>
     </template>
     <v-card tile>
-      <v-toolbar color="primary">
-        <v-btn icon color="white" @click="resetForm">
+      <v-toolbar color="primary" dark>
+        <v-btn icon @click="resetForm">
           <v-icon>close</v-icon>
         </v-btn>
-        <v-toolbar-title class="white--text" :class="toolbarTitleClass">
+        <v-toolbar-title :class="toolbarTitleClass">
           {{ noteForEdit ? "Edit" : "Create new" }} note
         </v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
-          <v-btn text color="white" @click="save">Save</v-btn>
+          <v-btn text @click="save">Save</v-btn>
         </v-toolbar-items>
       </v-toolbar>
       <v-card-text class="pt-6 px-6 pb-0">

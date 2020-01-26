@@ -70,9 +70,7 @@ export default {
           email: this.email,
           password: this.password
         });
-
         this.loading = false;
-        this.$router.push("/");
       } catch (e) {
         // eslint-disable-next-line no-console
         console.log(e);
