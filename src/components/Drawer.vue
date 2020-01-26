@@ -15,6 +15,20 @@
 
     <v-divider></v-divider>
     <v-list dense>
+      <v-list-item>
+        <v-list-item-action>
+          <v-icon>brightness_medium</v-icon>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-switch
+            class="ml-1"
+            :ripple="false"
+            color="primary"
+            v-model="$vuetify.theme.dark"
+          >
+          </v-switch>
+        </v-list-item-content>
+      </v-list-item>
       <v-list-item link @click.prevent="$store.dispatch('logout')">
         <v-list-item-action>
           <v-icon>exit_to_app</v-icon>
