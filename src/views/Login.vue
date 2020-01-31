@@ -6,7 +6,7 @@
           <v-toolbar-title>Login</v-toolbar-title>
         </v-toolbar>
         <v-card-text>
-          <v-form ref="form" lazy-validation>
+          <v-form ref="form" @submit.prevent="submitHandler" lazy-validation>
             <v-text-field
               v-model="email"
               label="Email"
@@ -27,24 +27,21 @@
               prepend-icon="lock"
               type="password"
             />
+
+            <v-card-actions>
+              <span>
+                Have not an account?
+                <router-link :to="'/register'">
+                  Create
+                </router-link>
+              </span>
+              <v-spacer />
+              <v-btn type="submit" color="primary" :loading="loading">
+                Login
+              </v-btn>
+            </v-card-actions>
           </v-form>
         </v-card-text>
-        <v-card-actions>
-          <span>
-            Have not an account?
-            <router-link :to="'/register'">
-              Create
-            </router-link>
-          </span>
-          <v-spacer />
-          <v-btn
-            color="primary"
-            @click.prevent="submitHandler"
-            :loading="loading"
-          >
-            Login
-          </v-btn>
-        </v-card-actions>
       </v-card>
     </v-col>
   </v-row>
@@ -59,18 +56,19 @@ export default {
     loading: false
   }),
   methods: {
-    async submitHandler() {
+    submitHandler() {
       if (!this.$refs.form.validate()) {
         return;
       }
 
       try {
         this.loading = true;
-        await this.$store.dispatch("login", {
-          email: this.email,
-          password: this.password
-        });
-        this.loading = false;
+        this.$store
+          .dispatch("login", {
+            email: this.email,
+            password: this.password
+          })
+          .finally(() => (this.loading = false));
       } catch (e) {
         // eslint-disable-next-line no-console
         console.log(e);
