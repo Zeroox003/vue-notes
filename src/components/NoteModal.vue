@@ -42,7 +42,7 @@
           <v-btn text @click="save">Save</v-btn>
         </v-toolbar-items>
       </v-toolbar>
-      <v-card-text class="pt-6 px-6 pb-0">
+      <v-card-text class="pt-6">
         <v-form ref="form" lazy-validation>
           <v-text-field
             class="mb-4"
@@ -51,16 +51,21 @@
             label="Title"
             required
           ></v-text-field>
-          <v-textarea
+          <tiptap-vuetify
+            :toolbar-attributes="tiptapAttrs"
             v-model="localBody"
-            outlined
-            label="Body"
-            auto-grow
-            row-height="25"
-            required
-            :rules="[v => !!v.trim() || 'Body is required']"
-            no-resize
-          ></v-textarea>
+            placeholder="Write something..."
+            :extensions="extensions"
+            @keydown="bodyInputIsDirty = true"
+          >
+            <div
+              v-if="checkShowBodyRequired"
+              slot="footer"
+              style="color: #ff5252; padding: 5px; text-align: center;"
+            >
+              <strong>Body of note is required</strong>
+            </div>
+          </tiptap-vuetify>
         </v-form>
       </v-card-text>
     </v-card>
@@ -68,8 +73,32 @@
 </template>
 
 <script>
+import {
+  TiptapVuetify,
+  Heading,
+  Bold,
+  Italic,
+  Strike,
+  Underline,
+  Code,
+  CodeBlock,
+  Paragraph,
+  BulletList,
+  OrderedList,
+  ListItem,
+  Link,
+  Blockquote,
+  HardBreak,
+  HorizontalRule,
+  History,
+  Image
+} from "tiptap-vuetify";
+
 export default {
   name: "NoteModal",
+  components: {
+    TiptapVuetify
+  },
   props: {
     showModal: {
       type: Boolean,
@@ -84,7 +113,34 @@ export default {
     return {
       dialog: this.showModal,
       localTitle: "",
-      localBody: ""
+      localBody: "",
+      bodyInputIsDirty: false,
+      extensions: [
+        Code,
+        CodeBlock,
+        HorizontalRule,
+        Paragraph,
+        History,
+        HardBreak, // позволяет переносить через Shift + Ctrl + Enter
+        Underline,
+        Strike,
+        Italic,
+        ListItem, // если нужно использовать список (BulletList, OrderedList)
+        BulletList,
+        OrderedList,
+        Link,
+        Blockquote,
+        Image,
+        [
+          Heading,
+          {
+            options: {
+              levels: [1, 2, 3]
+            }
+          }
+        ],
+        Bold
+      ]
     };
   },
   methods: {
@@ -93,6 +149,7 @@ export default {
       this.$refs.form.resetValidation();
       this.$emit("cancel-update");
       this.dialog = false;
+      this.bodyInputIsDirty = false;
     },
     async save() {
       if (this.$refs.form.validate()) {
@@ -102,6 +159,8 @@ export default {
           await this.create();
         }
         this.resetForm();
+      } else if (this.checkHTMLStringIsEmty(this.localBody)) {
+        this.bodyInputIsDirty = true;
       }
     },
     async create() {
@@ -131,6 +190,12 @@ export default {
         // eslint-disable-next-line no-console
         console.log(e);
       }
+    },
+    checkHTMLStringIsEmty(html) {
+      const div = document.createElement("div");
+      div.innerHTML = html;
+      if (!div.firstElementChild) return true;
+      return !div.firstElementChild.textContent;
     }
   },
   watch: {
@@ -152,6 +217,18 @@ export default {
       return {
         "small-font-size": this.$vuetify.breakpoint.xs
       };
+    },
+    tiptapAttrs() {
+      if (!this.$vuetify.theme.dark) {
+        return { color: this.$vuetify.theme.themes["light"].background };
+      }
+
+      return { color: "#303030" };
+    },
+    checkShowBodyRequired() {
+      return (
+        this.bodyInputIsDirty && this.checkHTMLStringIsEmty(this.localBody)
+      );
     }
   }
 };
@@ -164,5 +241,9 @@ export default {
 
 .small-font-size {
   font-size: 1rem;
+}
+
+.ProseMirror {
+  min-height: 200px;
 }
 </style>

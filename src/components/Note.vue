@@ -6,7 +6,7 @@
     </v-card-subtitle>
 
     <v-card-text>
-      <pre class="text-body">{{ body }}</pre>
+      <div class="note-content" v-html="body"></div>
     </v-card-text>
 
     <hr />
@@ -64,12 +64,23 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .v-card hr {
   border: 0.5px solid #ddd;
 }
 
-.text-body {
+.note-content {
   white-space: pre-wrap;
+  overflow: hidden;
+  padding: 5px;
+  h1 {
+    margin: 10px 0 20px !important;
+  }
+  blockquote {
+    border-left: 0.25em solid #dfe2e5;
+    color: #6b9fff;
+    padding-left: 1em;
+    margin: 20px 0 !important;
+  }
 }
 </style>
