@@ -20,6 +20,7 @@ export default {
           .push(note);
         commit("addNote", note);
       } catch (e) {
+        commit("showMessage", { content: e });
         throw e;
       }
     },
@@ -33,6 +34,7 @@ export default {
           .update(note);
         commit("updateNote", note);
       } catch (e) {
+        commit("showMessage", { content: e });
         throw e;
       }
     },
@@ -46,6 +48,7 @@ export default {
           .remove();
         commit("deleteNote", id);
       } catch (e) {
+        commit("showMessage", { content: e });
         throw e;
       }
     },
@@ -64,10 +67,11 @@ export default {
           Object.keys(notes).map(key => ({ ...notes[key], id: key }))
         );
       } catch (e) {
+        commit("showMessage", { content: e });
         throw e;
       }
     },
-    async fetchNoteById({ dispatch }, id) {
+    async fetchNoteById({ dispatch, commit }, id) {
       try {
         const uid = await dispatch("getUid");
         const note =
@@ -80,6 +84,7 @@ export default {
           ).val() || {};
         return { ...note, id };
       } catch (e) {
+        commit("showMessage", { content: e });
         throw e;
       }
     }

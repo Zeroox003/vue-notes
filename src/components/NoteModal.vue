@@ -171,10 +171,12 @@ export default {
           date: new Date().toJSON()
         });
         this.resetForm();
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.log(e);
-      }
+        this.$showMessage({
+          content: "Note has been created.",
+          color: "success"
+        });
+        // eslint-disable-next-line no-empty
+      } catch (e) {}
     },
     async update() {
       try {
@@ -186,10 +188,12 @@ export default {
         };
         await this.$store.dispatch("updateNote", updatedNote);
         this.resetForm();
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.log(e);
-      }
+        this.$showMessage("showMessage", {
+          content: "Note has been updated.",
+          color: "success"
+        });
+        // eslint-disable-next-line no-empty
+      } catch (e) {}
     },
     checkHTMLStringIsEmty(html) {
       const div = document.createElement("div");

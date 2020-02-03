@@ -55,10 +55,20 @@ export default {
   },
   methods: {
     deleteNote(id) {
-      this.$store.dispatch("deleteNote", id);
+      try {
+        this.$store.dispatch("deleteNote", id);
+        this.$showMessage({
+          content: "Note has been deleted.",
+          color: "success"
+        });
+        // eslint-disable-next-line no-empty
+      } catch (e) {}
     },
     updateNote() {
-      this.$emit("updateNote", this.id);
+      try {
+        this.$emit("updateNote", this.id);
+        // eslint-disable-next-line no-empty
+      } catch (e) {}
     }
   }
 };

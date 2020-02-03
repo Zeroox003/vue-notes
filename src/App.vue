@@ -1,5 +1,7 @@
 <template>
   <v-app :style="{ background: $vuetify.theme.themes[theme].background }">
+    <Snackbar></Snackbar>
+
     <component :is="layout">
       <router-view />
     </component>
@@ -9,12 +11,14 @@
 <script>
 import DefaultLayout from "./layouts/DefaultLayout";
 import EmptyLayout from "./layouts/EmptyLayout";
+import Snackbar from "./components/Snackbar";
 
 export default {
   name: "App",
   components: {
     DefaultLayout,
-    EmptyLayout
+    EmptyLayout,
+    Snackbar
   },
   computed: {
     layout() {

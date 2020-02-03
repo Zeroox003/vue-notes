@@ -6,7 +6,7 @@
           <v-toolbar-title>Registration</v-toolbar-title>
         </v-toolbar>
         <v-card-text>
-          <v-form ref="form" @submit="submitHandler" lazy-validation>
+          <v-form ref="form" @submit.prevent="submitHandler" lazy-validation>
             <v-text-field
               v-model="email"
               label="Email"
@@ -36,7 +36,7 @@
                 </router-link>
               </span>
               <v-spacer />
-              <v-btn color="primary" :loading="loading">
+              <v-btn type="submit" color="primary" :loading="loading">
                 Register
               </v-btn>
             </v-card-actions>
@@ -56,23 +56,24 @@ export default {
     loading: false
   }),
   methods: {
-    submitHandler() {
+    async submitHandler() {
       if (!this.$refs.form.validate()) {
         return;
       }
 
       try {
         this.loading = true;
-        this.$store
-          .dispatch("register", {
-            email: this.email,
-            password: this.password
-          })
-          .finally(() => (this.loading = false));
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.log(e);
-      }
+        await this.$store.dispatch("register", {
+          email: this.email,
+          password: this.password
+        });
+        // eslint-disable-next-line no-empty
+      } catch (e) {}
+      this.$showMessage({
+        content: "You are successfully registered.",
+        color: "success"
+      });
+      this.loading = false;
     }
   }
 };

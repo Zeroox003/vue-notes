@@ -54,7 +54,10 @@ export default {
     }
   },
   async mounted() {
-    await this.$store.dispatch("fetchNotes");
+    try {
+      await this.$store.dispatch("fetchNotes");
+      // eslint-disable-next-line no-empty
+    } catch (e) {}
   },
   methods: {
     updateNote(id) {

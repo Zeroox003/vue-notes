@@ -3,6 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import vuetify from "./plugins/vuetify";
+import notifier from "./plugins/notifier";
 import dateFilter from "@/filters/date.filter";
 import VueMasonry from "vue-masonry-css";
 
@@ -13,6 +14,7 @@ import "firebase/database";
 
 Vue.filter("date", dateFilter);
 Vue.use(VueMasonry);
+Vue.use(notifier);
 
 firebase.initializeApp(firebaseSettings);
 

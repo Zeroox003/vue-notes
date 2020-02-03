@@ -56,23 +56,22 @@ export default {
     loading: false
   }),
   methods: {
-    submitHandler() {
+    async submitHandler() {
       if (!this.$refs.form.validate()) {
         return;
       }
 
       try {
         this.loading = true;
-        this.$store
-          .dispatch("login", {
-            email: this.email,
-            password: this.password
-          })
-          .finally(() => (this.loading = false));
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.log(e);
-      }
+        await this.$store.dispatch("login", {
+          email: this.email,
+          password: this.password
+        });
+        // eslint-disable-next-line no-empty
+      } catch (e) {}
+
+      this.loading = false;
+      this.$showMessage({ content: "You are logged in.", color: "success" });
     }
   }
 };
