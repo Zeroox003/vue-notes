@@ -14,11 +14,11 @@ export default {
     async createNote({ dispatch, commit }, note) {
       try {
         const uid = await dispatch("getUid");
-        await firebase
+        const newNote = await firebase
           .database()
           .ref(`/users/${uid}/notes`)
           .push(note);
-        commit("addNote", note);
+        commit("addNote", { ...note, id: newNote.key });
       } catch (e) {
         commit("showMessage", { content: e });
         throw e;
