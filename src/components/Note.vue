@@ -50,10 +50,9 @@
       </v-card>
     </v-dialog>
 
-    <v-card-title class="headline">{{ title }}</v-card-title>
-    <v-card-subtitle>
-      <strong>Created date:</strong> {{ date | date }}
-    </v-card-subtitle>
+    <v-card-title class="headline mb-3">{{ title }}</v-card-title>
+    <v-card-subtitle class="pb-2">{{ date | date }}</v-card-subtitle>
+    <hr :style="hrStyle" />
 
     <v-card-text>
       <div class="note-content" v-html="body"></div>
