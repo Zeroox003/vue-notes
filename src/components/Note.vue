@@ -25,21 +25,48 @@
         </template>
         <span>Edit</span>
       </v-tooltip>
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            v-on="on"
-            icon
-            text
-            class="ml-3"
-            color="red accent-2"
-            @click.prevent="deleteNote(id)"
-          >
-            <v-icon>delete</v-icon>
-          </v-btn>
+
+      <v-dialog v-model="noteDeletionModal" persistent max-width="290">
+        <template v-slot:activator="{ on: { click } }">
+          <v-tooltip bottom>
+            <template
+              v-slot:activator="{ on: { mouseenter, mouseleave, focus, blur } }"
+            >
+              <v-btn
+                icon
+                text
+                class="ml-3"
+                color="red accent-2"
+                @click="click"
+                @mouseenter="mouseenter"
+                @mouseleave="mouseleave"
+                @focus="focus"
+                @blur="blur"
+              >
+                <v-icon>delete</v-icon>
+              </v-btn>
+            </template>
+            <span>Delete</span>
+          </v-tooltip>
         </template>
-        <span>Delete</span>
-      </v-tooltip>
+        <v-card>
+          <v-card-title>Confirmation modal</v-card-title>
+          <v-card-text>Are you sure you want to delete the note?</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="red accent-2"
+              text
+              @click.prevent="noteDeletionModal = false"
+            >
+              No
+            </v-btn>
+            <v-btn color="green" text @click.prevent="deleteNote(id)">
+              Yes
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-card-actions>
   </v-card>
 </template>
@@ -53,6 +80,7 @@ export default {
     body: String,
     date: String
   },
+  data: () => ({ noteDeletionModal: false }),
   methods: {
     deleteNote(id) {
       try {
