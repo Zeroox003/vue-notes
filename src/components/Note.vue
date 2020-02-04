@@ -1,5 +1,55 @@
 <template>
-  <v-card>
+  <v-card hover @mouseenter="cardHover = true" @mouseleave="cardHover = false">
+    <v-dialog v-model="noteDeletionModal" persistent max-width="310">
+      <template v-slot:activator="{ on: { click } }">
+        <v-tooltip bottom>
+          <template
+            v-slot:activator="{ on: { mouseenter, mouseleave, focus, blur } }"
+          >
+            <v-fab-transition>
+              <v-btn
+                v-show="cardHover"
+                class="btn-delete"
+                fab
+                top
+                right
+                absolute
+                x-small
+                dark
+                depressed
+                color="red accent-2"
+                @click.prevent.stop="click"
+                @mouseenter="mouseenter"
+                @mouseleave="mouseleave"
+                @focus="focus"
+                @blur="blur"
+              >
+                <v-icon>delete</v-icon>
+              </v-btn>
+            </v-fab-transition>
+          </template>
+          <span>Delete</span>
+        </v-tooltip>
+      </template>
+      <v-card>
+        <v-card-title>Confirmation modal</v-card-title>
+        <v-card-text>Are you sure you want to delete the note?</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="red accent-2"
+            text
+            @click.prevent="noteDeletionModal = false"
+          >
+            No
+          </v-btn>
+          <v-btn color="green" text @click.prevent="deleteNote(id)">
+            Yes
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-card-title class="headline">{{ title }}</v-card-title>
     <v-card-subtitle>
       <strong>Created date:</strong> {{ date | date }}
@@ -9,7 +59,7 @@
       <div class="note-content" v-html="body"></div>
     </v-card-text>
 
-    <hr />
+    <hr :style="hrStyle" />
     <v-card-actions>
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
@@ -25,48 +75,6 @@
         </template>
         <span>Edit</span>
       </v-tooltip>
-
-      <v-dialog v-model="noteDeletionModal" persistent max-width="290">
-        <template v-slot:activator="{ on: { click } }">
-          <v-tooltip bottom>
-            <template
-              v-slot:activator="{ on: { mouseenter, mouseleave, focus, blur } }"
-            >
-              <v-btn
-                icon
-                text
-                class="ml-3"
-                color="red accent-2"
-                @click="click"
-                @mouseenter="mouseenter"
-                @mouseleave="mouseleave"
-                @focus="focus"
-                @blur="blur"
-              >
-                <v-icon>delete</v-icon>
-              </v-btn>
-            </template>
-            <span>Delete</span>
-          </v-tooltip>
-        </template>
-        <v-card>
-          <v-card-title>Confirmation modal</v-card-title>
-          <v-card-text>Are you sure you want to delete the note?</v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn
-              color="red accent-2"
-              text
-              @click.prevent="noteDeletionModal = false"
-            >
-              No
-            </v-btn>
-            <v-btn color="green" text @click.prevent="deleteNote(id)">
-              Yes
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
     </v-card-actions>
   </v-card>
 </template>
@@ -80,8 +88,15 @@ export default {
     body: String,
     date: String
   },
-  data: () => ({ noteDeletionModal: false }),
+  data: () => ({
+    noteDeletionModal: false,
+    cardHover: false
+  }),
   methods: {
+    fS(val) {
+      // eslint-disable-next-line no-console
+      console.log(val);
+    },
     deleteNote(id) {
       try {
         this.$store.dispatch("deleteNote", id);
@@ -98,13 +113,24 @@ export default {
         // eslint-disable-next-line no-empty
       } catch (e) {}
     }
+  },
+  computed: {
+    hrStyle: s =>
+      s.$vuetify.theme.dark ? { borderColor: "#222" } : { borderColor: "#ddd" }
   }
 };
 </script>
 
 <style lang="scss">
-.v-card hr {
-  border: 0.5px solid #ddd;
+.v-card {
+  .btn-delete {
+    top: -7px !important;
+    right: -7px !important;
+  }
+  & hr {
+    border-width: 0.5px;
+    border-style: solid;
+  }
 }
 
 .note-content {

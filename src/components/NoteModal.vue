@@ -43,7 +43,7 @@
         </v-toolbar-items>
       </v-toolbar>
       <v-card-text class="pt-6">
-        <v-form ref="form" lazy-validation>
+        <v-form @submit.prevent="save" ref="form" lazy-validation>
           <v-text-field
             class="mb-4"
             v-model="localTitle"
@@ -193,7 +193,7 @@ export default {
         this.saveLoading = true;
         await this.$store.dispatch("updateNote", updatedNote);
         this.resetForm();
-        this.$showMessage("showMessage", {
+        this.$showMessage({
           content: "Note has been updated.",
           color: "success"
         });
