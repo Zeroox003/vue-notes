@@ -2,7 +2,11 @@
   <div>
     <Search @onSearchInput="onSearchInput" />
 
-    <masonry :cols="{ default: 3, 800: 2, 500: 1 }" :gutter="20">
+    <masonry
+      v-if="getAllNotes.length"
+      :cols="{ default: 3, 800: 2, 500: 1 }"
+      :gutter="20"
+    >
       <Note
         class="mb-5"
         v-for="note in getAllNotes"
@@ -14,6 +18,13 @@
         @updateNote="updateNote"
       />
     </masonry>
+    <div v-else class="text-center mt-12">
+      <v-progress-circular
+        :size="100"
+        color="primary"
+        indeterminate
+      ></v-progress-circular>
+    </div>
 
     <NoteModal
       :show-modal="showModal"

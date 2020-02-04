@@ -39,7 +39,7 @@
         </v-toolbar-title>
         <v-spacer></v-spacer>
         <v-toolbar-items>
-          <v-btn text @click="save">Save</v-btn>
+          <v-btn text :loading="saveLoading" @click="save">Save</v-btn>
         </v-toolbar-items>
       </v-toolbar>
       <v-card-text class="pt-6">
@@ -115,6 +115,7 @@ export default {
       localTitle: "",
       localBody: "",
       bodyInputIsDirty: false,
+      saveLoading: false,
       extensions: [
         Code,
         CodeBlock,
@@ -165,6 +166,7 @@ export default {
     },
     async create() {
       try {
+        this.saveLoading = true;
         await this.$store.dispatch("createNote", {
           title: this.localTitle.trim(),
           body: this.localBody.trim(),
@@ -177,6 +179,8 @@ export default {
         });
         // eslint-disable-next-line no-empty
       } catch (e) {}
+
+      this.saveLoading = false;
     },
     async update() {
       try {
@@ -186,6 +190,7 @@ export default {
           body: this.localBody.trim(),
           date: this.noteForEdit.date
         };
+        this.saveLoading = true;
         await this.$store.dispatch("updateNote", updatedNote);
         this.resetForm();
         this.$showMessage("showMessage", {
@@ -194,6 +199,8 @@ export default {
         });
         // eslint-disable-next-line no-empty
       } catch (e) {}
+
+      this.saveLoading = false;
     },
     checkHTMLStringIsEmty(html) {
       const div = document.createElement("div");
