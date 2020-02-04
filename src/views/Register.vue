@@ -67,12 +67,13 @@ export default {
           email: this.email,
           password: this.password
         });
+        this.$showMessage({
+          content: "You are successfully registered.",
+          color: "success"
+        });
         // eslint-disable-next-line no-empty
       } catch (e) {}
-      this.$showMessage({
-        content: "You are successfully registered.",
-        color: "success"
-      });
+
       this.loading = false;
     }
   }
