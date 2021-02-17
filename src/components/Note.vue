@@ -50,10 +50,9 @@
       </v-card>
     </v-dialog>
 
-    <v-card-title class="headline">{{ title }}</v-card-title>
-    <v-card-subtitle>
-      <strong>Created date:</strong> {{ date | date }}
-    </v-card-subtitle>
+    <v-card-title class="headline mb-3">{{ title }}</v-card-title>
+    <v-card-subtitle class="pb-2">{{ date | date }}</v-card-subtitle>
+    <hr :style="hrStyle" />
 
     <v-card-text>
       <div class="note-content" v-html="body"></div>
@@ -137,14 +136,24 @@ export default {
   white-space: pre-wrap;
   overflow: hidden;
   padding: 5px;
-  h1 {
-    margin: 10px 0 20px !important;
+  margin-bottom: -10px;
+  &:hover {
+    cursor: default;
+  }
+  h1, h2, h3 {
+    margin: 5px 0 15px !important;
+  }
+  p {
+    margin-bottom: 10px;
   }
   blockquote {
     border-left: 0.25em solid #dfe2e5;
     color: #6b9fff;
     padding-left: 1em;
     margin: 20px 0 !important;
+  }
+  img {
+    width: 100%;
   }
 }
 </style>

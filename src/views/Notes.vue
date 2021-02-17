@@ -2,11 +2,17 @@
   <div>
     <Search @onSearchInput="onSearchInput" />
 
-    <masonry
-      v-if="getAllNotes.length"
-      :cols="{ default: 3, 800: 2, 500: 1 }"
-      :gutter="20"
-    >
+    <div v-if="notesLoading || !getAllNotes.length" class="text-center mt-12">
+      <v-progress-circular
+        v-if="notesLoading"
+        :size="100"
+        color="primary"
+        indeterminate
+      ></v-progress-circular>
+      <h2 v-else>Not found</h2>
+    </div>
+
+    <masonry v-else :cols="{ default: 3, 800: 2, 500: 1 }" :gutter="20">
       <Note
         class="mb-5"
         v-for="note in getAllNotes"
@@ -18,13 +24,6 @@
         @updateNote="updateNote"
       />
     </masonry>
-    <div v-else class="text-center mt-12">
-      <v-progress-circular
-        :size="100"
-        color="primary"
-        indeterminate
-      ></v-progress-circular>
-    </div>
 
     <NoteModal
       :show-modal="showModal"
@@ -51,6 +50,8 @@ export default {
     showModal: false,
 
     searchTerm: "",
+    notesLoading: false,
+
     notes: []
   }),
   computed: {
@@ -66,9 +67,12 @@ export default {
   },
   async mounted() {
     try {
+      this.notesLoading = true;
       await this.$store.dispatch("fetchNotes");
       // eslint-disable-next-line no-empty
     } catch (e) {}
+
+    this.notesLoading = false;
   },
   methods: {
     updateNote(id) {
