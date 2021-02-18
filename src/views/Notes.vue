@@ -14,14 +14,11 @@
 
     <masonry v-else :cols="{ default: 3, 800: 2, 500: 1 }" :gutter="20">
       <Note
-        class="mb-5"
         v-for="note in getAllNotes"
+        class="mb-5"
         :key="note.id"
-        :id="note.id"
-        :title="note.title"
-        :body="note.body"
-        :date="note.date"
-        @updateNote="updateNote"
+        :noteModel="note"
+        @editNote="openEditNoteModal"
       />
     </masonry>
 
@@ -75,7 +72,7 @@ export default {
     this.notesLoading = false;
   },
   methods: {
-    updateNote(id) {
+    openEditNoteModal(id) {
       this.noteForEdit = this.getAllNotes.find(n => n.id === id);
       this.showModal = true;
     },

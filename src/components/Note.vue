@@ -1,101 +1,113 @@
 <template>
-  <v-card hover @mouseenter="cardHover = true" @mouseleave="cardHover = false">
-    <v-dialog v-model="noteDeletionModal" persistent max-width="310">
-      <template v-slot:activator="{ on: { click } }">
-        <v-tooltip bottom>
-          <template
-            v-slot:activator="{ on: { mouseenter, mouseleave, focus, blur } }"
-          >
-            <v-fab-transition>
-              <v-btn
-                v-show="cardHover"
-                class="btn-delete"
-                fab
-                top
-                right
-                absolute
-                x-small
-                dark
-                depressed
-                color="red accent-2"
-                @click.prevent.stop="click"
-                @mouseenter="mouseenter"
-                @mouseleave="mouseleave"
-                @focus="focus"
-                @blur="blur"
-              >
-                <v-icon>delete</v-icon>
-              </v-btn>
-            </v-fab-transition>
-          </template>
-          <span>Delete</span>
-        </v-tooltip>
-      </template>
-      <v-card>
-        <v-card-title>Confirmation modal</v-card-title>
-        <v-card-text>Are you sure you want to delete the note?</v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="red accent-2"
-            text
-            @click.prevent="noteDeletionModal = false"
-          >
-            No
-          </v-btn>
-          <v-btn color="green" text @click.prevent="deleteNote(id)">
-            Yes
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-card-title class="headline mb-3">{{ title }}</v-card-title>
-    <v-card-subtitle class="pb-2">{{ date | date }}</v-card-subtitle>
-    <hr :style="hrStyle" />
-
-    <v-card-text>
-      <div class="note-content" v-html="body"></div>
-    </v-card-text>
-
-    <hr :style="hrStyle" />
-    <v-card-actions>
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            v-on="on"
-            icon
-            text
-            color="orange accent-2"
-            @click.prevent="updateNote"
-          >
-            <v-icon>edit</v-icon>
-          </v-btn>
+  <v-hover v-slot="{ hover: cardHover }" :close-delay="hoveringCloseDelay">
+    <v-card hover :color="noteModel.cardColor" @click.prevent="editNote">
+      <v-dialog v-model="noteDeletionModal" persistent max-width="310">
+        <template v-slot:activator="{ on: { click } }">
+          <v-tooltip bottom>
+            <template
+              v-slot:activator="{ on: { mouseenter, mouseleave, focus, blur } }"
+            >
+              <v-fab-transition>
+                <v-btn
+                  v-show="cardHover"
+                  class="btn-delete"
+                  fab
+                  top
+                  right
+                  absolute
+                  x-small
+                  dark
+                  depressed
+                  color="red accent-2"
+                  @click.prevent.stop="click"
+                  @mouseenter="mouseenter"
+                  @mouseleave="mouseleave"
+                  @focus="focus"
+                  @blur="blur"
+                >
+                  <v-icon>delete</v-icon>
+                </v-btn>
+              </v-fab-transition>
+            </template>
+            <span>Delete</span>
+          </v-tooltip>
         </template>
-        <span>Edit</span>
-      </v-tooltip>
-    </v-card-actions>
-  </v-card>
+        <v-card>
+          <v-card-title>Confirmation modal</v-card-title>
+          <v-card-text>Are you sure you want to delete the note?</v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="green" text @click.prevent="deleteNote(noteModel.id)">
+              Yes
+            </v-btn>
+            <v-btn
+              color="red accent-2"
+              text
+              @click.prevent="noteDeletionModal = false"
+            >
+              No
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <v-card-title class="headline mb-3">{{ noteModel.title }}</v-card-title>
+      <v-card-subtitle class="pb-2">{{
+        noteModel.date | date
+      }}</v-card-subtitle>
+
+      <v-card-text>
+        <div class="note-content" v-html="noteModel.body"></div>
+      </v-card-text>
+
+      <v-card-actions v-if="cardHover || colorPickerMenu.isActive">
+        <v-menu
+          :close-on-content-click="false"
+          :open-on-hover="true"
+          :open-on-click="false"
+          :close-delay="hoveringCloseDelay"
+          offset-x
+        >
+          <template #activator="{ on, attrs }">
+            <v-btn v-on="on" v-bind="attrs" icon text>
+              <v-icon>mdi-format-color-fill</v-icon>
+            </v-btn>
+          </template>
+          <v-color-picker
+            @mouseenter.native="toggleColorPickerMenuState(true)"
+            @mouseleave.native="toggleColorPickerMenuState(false)"
+            v-model="noteModel.cardColor"
+            dot-size="25"
+            hide-inputs
+            hide-mode-switch
+            hide-sliders
+            mode="hexa"
+            @input="changeCardColor"
+          ></v-color-picker>
+        </v-menu>
+      </v-card-actions>
+    </v-card>
+  </v-hover>
 </template>
 
 <script>
 export default {
   name: "note",
   props: {
-    id: String,
-    title: String,
-    body: String,
-    date: String
+    noteModel: {
+      type: Object
+    }
   },
   data: () => ({
     noteDeletionModal: false,
-    cardHover: false
+    colorPickerMenu: {
+      isActive: false,
+      stateChangerDebounceId: null
+    },
+    changeCardColorDebounceId: null,
+    hoveringCloseDelay: 200
   }),
   methods: {
-    fS(val) {
-      // eslint-disable-next-line no-console
-      console.log(val);
-    },
     deleteNote(id) {
       try {
         this.$store.dispatch("deleteNote", id);
@@ -106,16 +118,30 @@ export default {
         // eslint-disable-next-line no-empty
       } catch (e) {}
     },
-    updateNote() {
+    editNote() {
       try {
-        this.$emit("updateNote", this.id);
+        this.$emit("editNote", this.noteModel.id);
         // eslint-disable-next-line no-empty
       } catch (e) {}
+    },
+    changeCardColor() {
+      clearTimeout(this.changeCardColorDebounceId);
+      this.changeCardColorDebounceId = setTimeout(async () => {
+        await this.$store.dispatch("updateNote", this.noteModel);
+      }, 600);
+    },
+    toggleColorPickerMenuState(isActive) {
+      clearTimeout(this.colorPickerMenu.stateChangerDebounceId);
+      if (isActive) this.colorPickerMenu.isActive = true;
+      else {
+        /* Made a workaround because the card actions rerender is too 
+          fast and the color picker disappears */
+        this.colorPickerMenu.stateChangerDebounceId = setTimeout(
+          () => (this.colorPickerMenu.isActive = isActive),
+          this.hoveringCloseDelay
+        );
+      }
     }
-  },
-  computed: {
-    hrStyle: s =>
-      s.$vuetify.theme.dark ? { borderColor: "#222" } : { borderColor: "#ddd" }
   }
 };
 </script>
@@ -126,10 +152,6 @@ export default {
     top: -7px !important;
     right: -7px !important;
   }
-  & hr {
-    border-width: 0.5px;
-    border-style: solid;
-  }
 }
 
 .note-content {
@@ -137,10 +159,9 @@ export default {
   overflow: hidden;
   padding: 5px;
   margin-bottom: -10px;
-  &:hover {
-    cursor: default;
-  }
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     margin: 5px 0 15px !important;
   }
   p {

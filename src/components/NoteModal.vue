@@ -170,6 +170,7 @@ export default {
         await this.$store.dispatch("createNote", {
           title: this.localTitle.trim(),
           body: this.localBody.trim(),
+          cardColor: "#ffffff",
           date: new Date().toJSON()
         });
         this.resetForm();
